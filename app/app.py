@@ -1,247 +1,29 @@
-﻿import json
-import pandas as pd
+import json as json_from_json
+import numpy as np
+
 from datetime import datetime,date
 from collections import Counter
-import numpy as np
-import pymysql
-
-def calculate_age_decimal(born):
-    now = datetime.utcnow()
-    return abs((now - born).days)/365.2425
-
-
-def get_data_from_mysql_table_by_import_id(import_id):
-    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='Make17', db='sys',autocommit=True)
-    cur = conn.cursor()
-    sql = f"select * from new_schema.dataset where import_id={import_id}"
-    cur.execute(sql)
-    data = cur.fetchall()
-    if len(data)>0:
-        return {'citizens' : [{'citizen_id' : x[1],
-                 'town' : x[2],
-                 'street' : x[3],
-                 'building' : x[4],
-                 'apartment' : x[5],
-                 'name' : x[6],
-                 'birth_date' : x[7],
-                 'gender' : x[8],
-                 'relatives' : json.loads(x[9])} for x in data]}
-    return False
-def insert_dict_into_mysql_table(data, import_id):
-    data = data['citizens']
-    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='Make17', db='sys',autocommit=True)
-    cur = conn.cursor()
-    
-    rows = [(import_id,x['citizen_id'],x['town'],x['street'],x['building'],
-      x['apartment'],x['name'],x['birth_date'],x['gender'],json.dumps(x['relatives'])) for x in data]
-    
-    values = ', '.join(map(str, rows))
-    sql = f"INSERT INTO new_schema.dataset VALUES {values}"
-    cur.execute(sql)
-def change_mysql_table_by_improt_id(data,import_id):
-    data = data['citizens']
-    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='Make17', db='sys',autocommit=True)
-    cur = conn.cursor()
-    sql_delete = f"DELETE FROM new_schema.dataset WHERE IMPORT_ID={import_id}"
-    cur.execute(sql_delete)
-    
-    rows = [(import_id,x['citizen_id'],x['town'],x['street'],x['building'],
-      x['apartment'],x['name'],x['birth_date'],x['gender'],json.dumps(x['relatives'])) for x in data]
-    values = ', '.join(map(str, rows))
-    sql_insert = f"INSERT INTO new_schema.dataset VALUES {values}"
-    cur.execute(sql_insert)
-def get_maximum_import_id_from_mysql_table():
-    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='Make17', db='sys',autocommit=True)
-    cur = conn.cursor()
-    sql = f"SELECT MAX(IMPORT_ID) FROM new_schema.dataset"
-    cur.execute(sql)
-    return cur.fetchall()[0][0]
-
-
-
-def apartment_valid_value(t):
-    if not 'apartment' in t:
-        return True
-    if isinstance(t['apartment'],int):
-        if t['apartment']>=0:
-            return True
-    return False
-
-def citizen_id_valid_value(t):
-    if not 'citizen_id' in t:
-        return True
-    if isinstance(t['citizen_id'],int):
-        if t['citizen_id']>=0:
-            return True
-    return False
-
-def gender_valid_value(t):
-    if not 'gender' in t:
-        return True
-    if isinstance(t['gender'],str):
-        if t['gender'] in ['male','female']:
-            return True
-    return False
-
-def building_valid_value(t):
-    if not 'building' in t:
-        return True
-    if isinstance(t['building'],str):
-        if len(t['building'])>0:
-            return True
-    return False
-
-def name_valid_value(t):
-    if not 'name' in t:
-        return True
-    if isinstance(t['name'],str):
-        if len(t['name'])>0:
-            return True
-    return False
-
-def street_valid_value(t):
-    if not 'name' in t:
-        return True
-    if isinstance(t['street'],str):
-        if len(t['street'])>0:
-            return True
-    return False
-
-def town_valid_value(t):
-    if not 'town' in t:
-        return True
-    if isinstance(t['town'],str):
-        if len(t['town'])>0:
-            return True
-    return False
-
-def birth_date_valid_value(t):
-    if not 'birth_date' in t:
-        return True
-    if isinstance(t['birth_date'],str):
-        if len(t['birth_date'])>0:
-            try:
-                t = datetime.strptime(t['birth_date'], "%d.%m.%Y")
-                # ПРОВЕРКА НА ТО, ЧТО ВОЗРАСТ БОЛЬШЕ ТЕКУЩЕЙ ДАТЫ
-                if t >= datetime.now():
-                    return False
-                return True
-            except:
-                return False
-            
-    return False
-
-def relatives_valid_value(t,citizen_id):
-    if not 'relatives' in t:
-        return True
-    if isinstance(t['relatives'],list):
-        if len(t['relatives'])>=0:
-            # ПРОВЕРКА НА ТО, ЧТО СРЕДИ РОДСТВЕННИКОВ НЕТ ДУБ
-            if len(t['relatives'])!=len(set(t['relatives'])):
-                return False
-            for x in t['relatives']:
-                if not isinstance(x,int):
-                    return False
-            for x in t['relatives']:
-                if x==citizen_id:
-                    return False
-            return True
-    return False
-
-def excess_fields_value(t):
-    # ПРОВЕРКА НА ТО, ЧТО ОТСУТСТВУЮТ ЛИШНИЕ ПОЛЯ
-    columns = set(['apartment', 'birth_date', 'building', 'citizen_id', 'gender', 'name', 'relatives', 'street', 'town'])
-    for x in t.keys():
-        if x not in columns:
-            return False
-    return True
-
-
-
-def apartment_valid(t):
-    for x in t['citizens']:
-        if x['apartment']<0:
-            return False
-    return True
-
-def citizen_id_valid(t):
-    for x in t['citizens']:
-        if x['citizen_id']<0:
-            return False
-    tmp = [x['citizen_id'] for x in t['citizens']]
-    return len(set(tmp))==len(tmp)
-
-def gender_valid(t):
-    for x in t['citizens']:
-        if x['gender'] not in ['male','female']:
-            return False
-    return True
-
-def string_valid(t):
-    for x in t['citizens']:
-        if len(x['building'])==0 or len(x['name'])==0 or len(x['street'])==0 or len(x['town'])==0:
-            return False
-    return True
-
-def relatives_valid(t):
-    d_tmp = {}
-    for x in t['citizens']:
-        
-        # ПРОВЕРКА НА ТО ЧТО КЛИЕНТ САМ У СЕБЯ В РОДСТВЕННИКАХ НЕ ИМЕЕТСЯ
-        if x['citizen_id'] in x['relatives']:
-            return False
-        # ПРОВЕРКА НА ТО, ЧТО ДУБЛЕЙ НЕТ В РОДСТВЕННИКАХ
-        if len(x['relatives'])!=len(set(x['relatives'])):
-            return False
-        d_tmp[x['citizen_id']]=x['relatives']
-    for x in d_tmp:
-        for y in d_tmp[x]:
-            if y in d_tmp.keys():
-                if x not in d_tmp[y]:
-                    return False
-    return True
-
-def birth_date_valid(t):
-    for x in t['citizens']:
-        try:
-            datetime.strptime(x['birth_date'], "%d.%m.%Y")
-        except:
-            return False
-        # ПРОВЕРКА ЕСЛИ ДАТА РОЖДЕНИЯ БОЛЬШЕ ТЕКУЩЕЙ
-        if datetime.strptime(x['birth_date'], "%d.%m.%Y") >= datetime.now():
-            return False
-    return True
-
-def excess_fields(t):
-    # ПРОВЕРКА НА ТО, ЧТО ОТСУТСТВУЮТ ЛИШНИЕ ПОЛЯ
-    columns = set(['apartment', 'birth_date', 'building', 'citizen_id', 'gender', 'name', 'relatives', 'street', 'town'])
-    for x in t['citizens']:
-        if len(set(x.keys())) > len(columns):
-            return False
-    return True
-
-
 from time import time
-from flask import Flask, jsonify
-from flask import abort
-from flask import json
-from flask import request
-import json as json_from_json
 
-d = {}
-import_id = 0
+
+from flask import Flask, jsonify,abort,json,request
+
+
+from database_functions import *
+from get_import_valid_functions import *
+from patch_valid_functions import *
 
 app = Flask(__name__)
-
-
 @app.route('/')
 def index():
     return "Hello, World!"
 
 @app.route('/exports', methods=['GET'])
 def get_tasks():
-    global d
-    return json_from_json.dumps(d,ensure_ascii=False)
+    if get_data_from_mysql_table():
+        print('asdasdasdasdasdasd')
+        return json_from_json.dumps(get_data_from_mysql_table(),ensure_ascii=False)
+    return abort(400)
     
 @app.route('/imports', methods=['POST'])
 def mm1():
