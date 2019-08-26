@@ -13,16 +13,21 @@ from database_functions import *
 from get_import_valid_functions import *
 from patch_valid_functions import *
 
-app = Flask(__name__)
-@app.route('/')
-def index():
-    return "Hello, World!"
+def calculate_age(born):
+    today = datetime.utcnow()
+    year =  today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+    return year
 
-@app.route('/exports', methods=['GET'])
-def get_tasks():
-    if get_data_from_mysql_table():
-        return json_from_json.dumps(get_data_from_mysql_table(),ensure_ascii=False)
-    return abort(400)
+app = Flask(__name__)
+# @app.route('/')
+# def index():
+#     return "Hello, World!"
+
+# @app.route('/exports', methods=['GET'])
+# def get_tasks():
+#     if get_data_from_mysql_table():
+#         return json_from_json.dumps(get_data_from_mysql_table(),ensure_ascii=False)
+#     return abort(400)
     
 @app.route('/imports', methods=['POST'])
 def mm1():
@@ -156,7 +161,7 @@ def mm5(import_id):
         for item in data:
             
             born = datetime.strptime(item['birth_date'], "%d.%m.%Y")
-            age = calculate_age_decimal(born)    
+            age = calculate_age(born)    
             
             if item['town'] in city_age:
                 city_age[item['town']].append(age)
@@ -165,9 +170,9 @@ def mm5(import_id):
         output = []
         for x in city_age:
             tmp = {"town": x,
-                "p50": np.percentile(city_age[x], q = 50,interpolation='linear'),
-                "p75": np.percentile(city_age[x], q = 75,interpolation='linear'),
-                "p99": np.percentile(city_age[x], q = 99,interpolation='linear')}
+                "p50": round(np.percentile(city_age[x], q = 50,interpolation='linear'),2),
+                "p75": round(np.percentile(city_age[x], q = 75,interpolation='linear'),2),
+                "p99": round(np.percentile(city_age[x], q = 99,interpolation='linear'),2)}
             output.append(tmp)
         
         return json_from_json.dumps({'data' : output}, ensure_ascii=False)

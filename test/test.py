@@ -36,10 +36,6 @@ class TestStringCalculator(unittest.TestCase):
                     "birth_date": "23.11.1986",
                     "gender": "female",
                     "relatives": [2]}]}    
-    def test__server__runned(self):
-        url = self.main_url
-        r = requests.get(url)
-        self.assertEqual(r.status_code, 200, 'Соединение установлено: код верный')    
 # --------------------------------------------------------------------------------------
     def test_method__1__citizen_id__valid__true(self):
         data = self.data.copy()
@@ -89,7 +85,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
         data['citizens'][1]['town']=old
 # --------------------------------------------------------------------------------------
-    def test_method__1__building__false(self):
+    def test_method__1__building__valid__false(self):
         data = self.data.copy()
         old = data['citizens'][1]['building']
         data['citizens'][1]['building']=''
@@ -98,7 +94,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
         data['citizens'][1]['building']=old
         
-    def test_method__1__building__true(self):
+    def test_method__1__building__valid__true(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -113,7 +109,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
         data['citizens'][1]['building']=old
 # --------------------------------------------------------------------------------------
-    def test_method__1__street__false(self):
+    def test_method__1__street__valid__false(self):
         data = self.data.copy()
         old = data['citizens'][1]['street']
         data['citizens'][1]['street']=''
@@ -122,7 +118,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
         data['citizens'][1]['street']=old
         
-    def test_method__1__street__true(self):
+    def test_method__1__street__valid__true(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -137,7 +133,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
         data['citizens'][1]['street']=old
 # --------------------------------------------------------------------------------------
-    def test_method__1__name__false(self):
+    def test_method__1__name__valid__false(self):
         data = self.data.copy()
         old = data['citizens'][1]['name']
         data['citizens'][1]['name']=''
@@ -146,7 +142,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
         data['citizens'][1]['name']=old
         
-    def test_method__1__name__true(self):
+    def test_method__1__name__valid__true(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -440,7 +436,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertTrue(t2-t1 < 10)
         
 # --------------------------------------------------------------------------------------
-    def test_method__2__false___no_field_needed(self):
+    def test_method__2__true___no_field_needed(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -482,7 +478,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
 # --------------------------------------------------------------------------------------
-    def test_method__2__town_valid__false___value_is_null(self):
+    def test_method__2__town__valid__false___value_is_null(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -500,7 +496,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
         
-    def test_method__2__street_valid__false___value_is_null(self):
+    def test_method__2__street__valid__false___value_is_null(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -519,7 +515,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
         
         
-    def test_method__2__building_valid__false___value_is_null(self):
+    def test_method__2__building__valid__false___value_is_null(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -537,7 +533,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
         
-    def test_method__2__name_valid__false___value_is_null(self):
+    def test_method__2__name__valid__false___value_is_null(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -555,7 +551,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
 # --------------------------------------------------------------------------------------
-    def test_method__2__town_valid__false___value_other_type(self):
+    def test_method__2__town__valid__false___value_other_type(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -573,7 +569,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
         
-    def test_method__2__street_valid__false___value_other_type(self):
+    def test_method__2__street__valid__false___value_other_type(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -592,7 +588,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(r.status_code, 400)
         
         
-    def test_method__2__building_valid__false___value_other_type(self):
+    def test_method__2__building__valid__false___value_other_type(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -610,7 +606,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
         
-    def test_method__2__name_valid__false___value_other_type(self):
+    def test_method__2__name__valid__false___value_other_type(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -628,7 +624,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
 # --------------------------------------------------------------------------------------
-    def test_method__2__apartment_valid__false___value_other_type(self):
+    def test_method__2__apartment__valid__false___value_other_type(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -645,7 +641,7 @@ class TestStringCalculator(unittest.TestCase):
         api_url = self.main_url + '/imports/' + str(int(import_id)) + '/citizens/2'
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
-    def test_method__2__apartment_valid__true(self):
+    def test_method__2__apartment__valid__true(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -663,7 +659,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 200)
         
-    def test_method__2__apartment_valid__false___less_than_0(self):
+    def test_method__2__apartment__valid__false___less_than_0(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -699,7 +695,7 @@ class TestStringCalculator(unittest.TestCase):
         api_url = self.main_url + '/imports/' + str(int(import_id)) + '/citizens/2'
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
-    def test_method__2__birth_date_valid__true(self):
+    def test_method__2__birth_date__valid__true(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -718,7 +714,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 200)
         
-    def test_method__2__birth_date_valid__false___birth_date_after_today(self):
+    def test_method__2__birth_date__valid__false___birth_date_after_today(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -777,7 +773,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 400)
 # --------------------------------------------------------------------------------------
-    def test_method__2__relatives_valid__true__not__changes(self):
+    def test_method__2__relatives__valid__true__not__changes(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -789,7 +785,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.patch(url=api_url, json=test_patch)
         self.assertEqual(r.status_code, 200)
         
-    def test_method__2__relatives_valid__true__case_1(self):
+    def test_method__2__relatives__valid__true__case_1(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -805,7 +801,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(d['data'][0]['relatives'], [])
         self.assertEqual(d['data'][2]['relatives'], [])
         
-    def test_method__2__relatives_valid__true__case_2(self):
+    def test_method__2__relatives__valid__true__case_2(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -824,7 +820,7 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(d['data'][1]['relatives'], [1,3,5,6,7])
         
         
-    def test_method__2__relatives_valid__false__case_3__relatives_list_have_no_int_values(self):
+    def test_method__2__relatives__valid__false__case_3__relatives_list_have_no_int_values(self):
         data = self.data.copy()
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
@@ -849,7 +845,7 @@ class TestStringCalculator(unittest.TestCase):
         url = self.main_url + "/imports/" +str(int(import_id)) +  "/citizens"
         self.assertEqual(r.status_code, 400)
         
-    def test_method__2__true___case_3(self):
+    def test_method__2__true__case_3(self):
         t1 = time()
         l = []
         # size_not_odd
@@ -885,7 +881,7 @@ class TestStringCalculator(unittest.TestCase):
         
         
         
-    def test_method__2__true___change__time_less_10_second_if_more_than_10000_citizens(self):
+    def test_method__2__true__time_less_10_second_if_more_than_10000_citizens(self):
         t1 = time()
         l = []
         # size_not_odd
@@ -927,8 +923,9 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertTrue(t2-t1 < 10)
         
-        
-    def test_method__3__true___citizen_id_valid(self):
+# --------------------------------------------------------------------------------------
+ 
+    def test_method__3__citizen_id__valid__true(self):
         tmp_data = {
     "citizens": [{
             "citizen_id": 1,
@@ -965,7 +962,7 @@ class TestStringCalculator(unittest.TestCase):
         r = requests.get(api_url)
         self.assertEqual(r.status_code, 200)
         
-    def test_method__3__false___citizen_id_valid(self):
+    def test_method__3__citizen_id__valid__false(self):
         tmp_data = {
     "citizens": [{
             "citizen_id": 1,
@@ -1001,7 +998,156 @@ class TestStringCalculator(unittest.TestCase):
         api_url = self.main_url + '/imports/' + str(int(import_id + 1)) + '/citizens'
         r = requests.get(api_url)
         self.assertEqual(r.status_code, 400)
+# --------------------------------------------------------------------------------------
 
+    def test_method__4__citizen_id__valid__false(self):
+        tmp_data = {
+    "citizens": [{
+            "citizen_id": 1,
+            "town": "Москва",
+            "street": "Льва Толстого",
+            "building": "16к7стр5",
+            "apartment": 7,
+            "name": "Иванов Иван Иванович",
+            "birth_date": "26.12.1986",
+            "gender": "male",
+            "relatives": [2]},
+                {"citizen_id": 2,
+                "town": "Москва",
+                "street": "Льва Толстого",
+                "building": "16к7стр5",
+                "apartment": 7,
+                "name": "Иванов Сергей Иванович",
+                "birth_date": "17.04.1997",
+                "gender": "male",
+                "relatives": [1,3]},
+                    {"citizen_id": 3,
+                    "town": "Керчь",
+                    "street": "Иосифа Бродского",
+                    "building": "2",
+                    "apartment": 11,
+                    "name": "Романова Мария Леонидовна",
+                    "birth_date": "23.11.1986",
+                    "gender": "female",
+                    "relatives": [2]}]}
+        api_url = self.main_url + '/imports'
+        r = requests.post(url=api_url, json=tmp_data)
+        import_id = json.loads(r.text)['data']['import_id']        
+        api_url = self.main_url + '/imports/' + str(int(import_id + 1)) + '/citizens/birthdays'
+        r = requests.get(api_url)
+        self.assertEqual(r.status_code, 400)
+        
+    def test_method__4__citizen_id__valid__false(self):
+        tmp_data = {
+    "citizens": [{
+            "citizen_id": 1,
+            "town": "Москва",
+            "street": "Льва Толстого",
+            "building": "16к7стр5",
+            "apartment": 7,
+            "name": "Иванов Иван Иванович",
+            "birth_date": "26.12.1986",
+            "gender": "male",
+            "relatives": [2,3]},
+                {"citizen_id": 2,
+                "town": "Москва",
+                "street": "Льва Толстого",
+                "building": "16к7стр5",
+                "apartment": 7,
+                "name": "Иванов Сергей Иванович",
+                "birth_date": "17.04.1997",
+                "gender": "male",
+                "relatives": [1]},
+                    {"citizen_id": 3,
+                    "town": "Керчь",
+                    "street": "Иосифа Бродского",
+                    "building": "2",
+                    "apartment": 11,
+                    "name": "Романова Мария Леонидовна",
+                    "birth_date": "23.11.1986",
+                    "gender": "female",
+                    "relatives": [1]}]}
+        api_url = self.main_url + '/imports'
+        r = requests.post(url=api_url, json=tmp_data)
+        import_id = json.loads(r.text)['data']['import_id']        
+        api_url = self.main_url + '/imports/' + str(int(import_id)) + '/citizens/birthdays'
+        r = requests.get(api_url)
+        self.assertEqual(r.status_code, 200)
+        
+        d = json.loads(r.text)['data']["4"][0]['citizen_id']
+        self.assertEqual(d, 1)
+        
+        d = json.loads(r.text)['data']["11"][0]['citizen_id']
+        self.assertEqual(d, 1)
+        
+        d = json.loads(r.text)['data']["1"]
+        self.assertEqual(d, [])
+        
+        d = json.loads(r.text)['data']["12"][0]['citizen_id']
+        self.assertEqual(d, 2)
+        
+    def test_method__5__true(self):
+        tmp_data = {
+    "citizens": [{
+            "citizen_id": 1,
+            "town": "Москва",
+            "street": "Льва Толстого",
+            "building": "16к7стр5",
+            "apartment": 7,
+            "name": "Иванов Иван Иванович",
+            "birth_date": "26.12.1986",
+            "gender": "male",
+            "relatives": [2,3]},
+                {"citizen_id": 2,
+                "town": "Москва",
+                "street": "Льва Толстого",
+                "building": "16к7стр5",
+                "apartment": 7,
+                "name": "Иванов Сергей Иванович",
+                "birth_date": "17.04.1997",
+                "gender": "male",
+                "relatives": [1]},
+                    {"citizen_id": 3,
+                    "town": "Керчь",
+                    "street": "Иосифа Бродского",
+                    "building": "2",
+                    "apartment": 11,
+                    "name": "Романова Мария Леонидовна",
+                    "birth_date": "23.11.1986",
+                    "gender": "female",
+                    "relatives": [1]},
+                        {"citizen_id": 4,
+                        "town": "Керчь",
+                        "street": "Иосифа Бродского",
+                        "building": "2",
+                        "apartment": 11,
+                        "name": "Романова Мария Леонидовна",
+                        "birth_date": "23.11.1955",
+                        "gender": "female",
+                        "relatives": []}   
+    ]}
+        api_url = self.main_url + '/imports'
+        r = requests.post(url=api_url, json=tmp_data)
+        import_id = json.loads(r.text)['data']['import_id']        
+        api_url = self.main_url + '/imports/' + str(int(import_id)) + '/towns/stat/percentile/age'
+        r = requests.get(api_url)
+        self.assertEqual(r.status_code, 200)
+       
+        
+        
+        d = json.loads(r.text)['data']
+        self.assertEqual(len(d), 2)
+        
+        for x in d:
+            if x['town']=="Москва":
+                self.assertEqual(x['p50'], 27.0)
+                self.assertEqual(x['p75'], 29.5)
+                self.assertEqual(x['p99'], 31.9)
+        for x in d:
+            if x['town']=="Керчь":
+                self.assertEqual(x['p50'], 47.5)
+                self.assertEqual(x['p75'], 55.25)
+                self.assertEqual(x['p99'], 62.69)
         
 unittest.main(argv=[''],
               verbosity=2, 
