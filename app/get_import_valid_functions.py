@@ -32,7 +32,7 @@ def string_valid(t):
     for x in t['citizens']:
         if not isinstance(x['building'],str) or not isinstance(x['name'],str) or not isinstance(x['street'],str) or not isinstance(x['town'],str):
             return False
-        if len(x['building'])==0 or len(x['name'])==0 or len(x['street'])==0 or len(x['town'])==0
+        if len(x['building'])==0 or len(x['name'])==0 or len(x['street'])==0 or len(x['town'])==0:
             return False
         if len(x['building'])>256 or len(x['name'])>256 or len(x['street'])>256 or len(x['town'])>256:
             return False
