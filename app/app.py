@@ -21,7 +21,6 @@ def index():
 @app.route('/exports', methods=['GET'])
 def get_tasks():
     if get_data_from_mysql_table():
-        print('asdasdasdasdasdasd')
         return json_from_json.dumps(get_data_from_mysql_table(),ensure_ascii=False)
     return abort(400)
     
@@ -30,13 +29,16 @@ def mm1():
     import_id = get_maximum_import_id_from_mysql_table() + 1
     t1 = time()
     t = request.json
+    
+    if not excess_fields(t):
+        abort(400)
+    
     cond = (apartment_valid(t) and 
             citizen_id_valid(t) and 
             gender_valid(t) and 
             string_valid(t) and  
             relatives_valid(t) and 
-            birth_date_valid(t) and
-            excess_fields(t))    
+            birth_date_valid(t))    
     if cond:
         insert_dict_into_mysql_table(t, import_id)
         t2 = time()
@@ -46,6 +48,9 @@ def mm1():
 
 @app.route('/imports/<int:import_id>/citizens/<int:citizen_id>', methods=['PATCH'])
 def mm2(import_id,citizen_id):
+    if citizen_id<0:
+        abort(404)
+    
     # ПРОВЕРКА НА ТО, ЧТО ДАННЫЙ ОТЧЕТ СУЩЕСТВУЕТ
     if import_id > get_maximum_import_id_from_mysql_table():
         abort(400)
@@ -54,15 +59,18 @@ def mm2(import_id,citizen_id):
     if import_id > get_maximum_import_id_from_mysql_table():
         if citizen_id not in [x['citizen_id'] for x in d['citizens']]:
             abort(404)
+            
     # СЧИТЫВАЕМ ДАННЫЕ     
     t = request.json
 #     В запросе должно быть указано хотя бы одно поле
+
+
     if len(t)==0:
         abort(400)
-    
-    cond = (apartment_valid_value(t) & gender_valid_value(t) & building_valid_value(t) &
+            
+    cond = (apartment_valid_value(t) & building_valid_value(t) & gender_valid_value(t) & birth_date_valid_value(t) &
             name_valid_value(t) & street_valid_value(t) & town_valid_value(t) &
-            relatives_valid_value(t,citizen_id) & birth_date_valid_value(t) & excess_fields_value(t))
+            relatives_valid_value(t,citizen_id) & excess_fields_value(t))
 
 #     ПРОВЕРКА НА ВАЛИДНОСТЬ ВХОДНЫХ ПАРАМЕТРОВ        
     if not cond:
@@ -101,9 +109,9 @@ def mm2(import_id,citizen_id):
                 data[i]['relatives'] = array
                 
 # ЗАМЕНА СУЩЕСТВУЮШИХ ЗНАЧЕНИЙ
+    
     for col in t.keys():
         data[index][col] = t[col]
-    
     change_mysql_table_by_improt_id(d,import_id)
     
     return json_from_json.dumps({'data' : d}, ensure_ascii=False)
