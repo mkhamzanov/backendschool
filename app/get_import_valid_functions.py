@@ -44,7 +44,9 @@ def relatives_valid(t):
     for x in t['citizens']:
         if not isinstance(x['relatives'],list):
             return False
-        
+        lst = x['relatives']
+        if not all(isinstance(x, int) for x in lst):
+            return False
         # ПРОВЕРКА НА ТО ЧТО КЛИЕНТ САМ У СЕБЯ В РОДСТВЕННИКАХ НЕ ИМЕЕТСЯ
         if x['citizen_id'] in x['relatives']:
             return False

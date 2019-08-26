@@ -300,6 +300,40 @@ class TestStringCalculator(unittest.TestCase):
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=tmp_data)
         self.assertEqual(r.status_code, 201)
+        
+    def test_method__1__relatives__valid__false__all_relatives_list_have_no_int_values(self):
+        tmp_data = {
+    "citizens": [{
+            "citizen_id": 1,
+            "town": "Москва",
+            "street": "Льва Толстого",
+            "building": "16к7стр5",
+            "apartment": 7,
+            "name": "Иванов Иван Иванович",
+            "birth_date": "26.12.1986",
+            "gender": "male",
+            "relatives": [2,'5']},
+                {"citizen_id": 2,
+                "town": "Москва",
+                "street": "Льва Толстого",
+                "building": "16к7стр5",
+                "apartment": 7,
+                "name": "Иванов Сергей Иванович",
+                "birth_date": "17.04.1997",
+                "gender": "male",
+                "relatives": [1,3]},
+                    {"citizen_id": 3,
+                    "town": "Керчь",
+                    "street": "Иосифа Бродского",
+                    "building": "2",
+                    "apartment": 11,
+                    "name": "Романова Мария Леонидовна",
+                    "birth_date": "23.11.1986",
+                    "gender": "female",
+                    "relatives": [1,2]}]}
+        api_url = self.main_url + '/imports'
+        r = requests.post(url=api_url, json=tmp_data)
+        self.assertEqual(r.status_code, 400)
 # --------------------------------------------------------------------------------------
     def test_method__1__false__excess_field(self):
         tmp_data = {
@@ -789,6 +823,18 @@ class TestStringCalculator(unittest.TestCase):
         self.assertEqual(d['data'][2]['relatives'], [2])
         self.assertEqual(d['data'][1]['relatives'], [1,3,5,6,7])
         
+        
+    def test_method__2__relatives_valid__false__case_3__relatives_list_have_no_int_values(self):
+        data = self.data.copy()
+        api_url = self.main_url + '/imports'
+        r = requests.post(url=api_url, json=data)
+        t2 = time()
+        import_id = json.loads(r.text)['data']['import_id']
+        test_patch = {
+                    "relatives": [1,'asdasd']}
+        api_url = self.main_url + '/imports/' + str(int(import_id)) + '/citizens/2'
+        r = requests.patch(url=api_url, json=test_patch)
+        self.assertEqual(r.status_code, 400)
 # --------------------------------------------------------------------------------------
     def test_method__2__emprty_patch__false(self):
         data = self.data.copy()
