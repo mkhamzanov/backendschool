@@ -107,7 +107,7 @@ class TestStringCalculator(unittest.TestCase):
     def test_method__1__building__valid__false__len_more_than_256(self):
         data = self.data.copy()
         old = data['citizens'][1]['building']
-        data['citizens'][1]['building']='q'*258
+        data['citizens'][1]['building']='q'*300
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
         self.assertEqual(r.status_code, 400)
@@ -170,7 +170,7 @@ class TestStringCalculator(unittest.TestCase):
     def test_method__1__apartment__valid__false__less_than_null(self):
         data = self.data.copy()
         old = data['citizens'][1]['apartment']
-        data['citizens'][1]['apartment']=0
+        data['citizens'][1]['apartment']=-1
         api_url = self.main_url + '/imports'
         r = requests.post(url=api_url, json=data)
         self.assertEqual(r.status_code, 400) 

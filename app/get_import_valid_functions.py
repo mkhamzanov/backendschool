@@ -7,7 +7,7 @@ def apartment_valid(t):
     for x in t['citizens']:
         if not isinstance(x['apartment'],int):
             return False
-        if x['apartment']<=0:
+        if x['apartment']<0:
             return False
     return True
 
@@ -32,7 +32,9 @@ def string_valid(t):
     for x in t['citizens']:
         if not isinstance(x['building'],str) or not isinstance(x['name'],str) or not isinstance(x['street'],str) or not isinstance(x['town'],str):
             return False
-        if len(x['building'])==0 or len(x['name'])==0 or len(x['street'])==0 or len(x['town'])==0 or len(x['building'])>256 or len(x['name'])>256 or len(x['street'])>256 or len(x['town'])>256:
+        if len(x['building'])==0 or len(x['name'])==0 or len(x['street'])==0 or len(x['town'])==0
+            return False
+        if len(x['building'])>256 or len(x['name'])>256 or len(x['street'])>256 or len(x['town'])>256:
             return False
     return True
 
@@ -79,7 +81,6 @@ def excess_fields(t):
         if len(set(x.keys())) > len(columns):
             return False
         if len(set(columns) - set(x.keys()))>0:
-            print('asd')
             return False
     return True
 
