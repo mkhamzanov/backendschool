@@ -13,22 +13,7 @@ from database_functions import *
 from get_import_valid_functions import *
 from patch_valid_functions import *
 
-def calculate_age(born):
-    today = datetime.utcnow()
-    year =  today.year - born.year - ((today.month, today.day) < (born.month, born.day))
-    return year
-
 app = Flask(__name__)
-# @app.route('/')
-# def index():
-#     return "Hello, World!"
-
-# @app.route('/exports', methods=['GET'])
-# def get_tasks():
-#     if get_data_from_mysql_table():
-#         return json_from_json.dumps(get_data_from_mysql_table(),ensure_ascii=False)
-#     return abort(400)
-    
 @app.route('/imports', methods=['POST'])
 def mm1():
     import_id = get_maximum_import_id_from_mysql_table() + 1

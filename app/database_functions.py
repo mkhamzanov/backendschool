@@ -2,13 +2,14 @@ import pymysql
 import json
 from datetime import datetime,date
 
-password = 'Make17'
+password = 'Test11'
 schema = 'new_schema'
 table = 'data'
 
-def calculate_age_decimal(born):
-    now = datetime.utcnow()
-    return abs((now - born).days)/365.2425
+def calculate_age(born):
+    today = datetime.utcnow()
+    year =  today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+    return year
 
 def get_data_from_mysql_table_by_import_id(import_id):
     global password,schema,table

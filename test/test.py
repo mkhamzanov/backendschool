@@ -5,7 +5,7 @@ from time import time
 import json
 class TestStringCalculator(unittest.TestCase):
     
-    main_url = "http://127.0.0.1:5000"
+    main_url = "http://0.0.0.0:8080"
     
     data = {
     "citizens": [{
