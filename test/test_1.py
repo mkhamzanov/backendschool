@@ -928,10 +928,80 @@ class TestStringCalculator(unittest.TestCase):
         self.assertTrue(t2-t1 < 10)
         
         
+    def test_method__3__true___citizen_id_valid(self):
+        tmp_data = {
+    "citizens": [{
+            "citizen_id": 1,
+            "town": "Москва",
+            "street": "Льва Толстого",
+            "building": "16к7стр5",
+            "apartment": 7,
+            "name": "Иванов Иван Иванович",
+            "birth_date": "26.12.1986",
+            "gender": "male",
+            "relatives": [2]},
+                {"citizen_id": 2,
+                "town": "Москва",
+                "street": "Льва Толстого",
+                "building": "16к7стр5",
+                "apartment": 7,
+                "name": "Иванов Сергей Иванович",
+                "birth_date": "17.04.1997",
+                "gender": "male",
+                "relatives": [1,3]},
+                    {"citizen_id": 3,
+                    "town": "Керчь",
+                    "street": "Иосифа Бродского",
+                    "building": "2",
+                    "apartment": 11,
+                    "name": "Романова Мария Леонидовна",
+                    "birth_date": "23.11.1986",
+                    "gender": "female",
+                    "relatives": [2]}]}
+        api_url = self.main_url + '/imports'
+        r = requests.post(url=api_url, json=tmp_data)
+        import_id = json.loads(r.text)['data']['import_id']        
+        api_url = self.main_url + '/imports/' + str(int(import_id)) + '/citizens'
+        r = requests.get(api_url)
+        self.assertEqual(r.status_code, 200)
         
-        
-#         url = self.main_url + "/imports/" +str(int(import_id)) +  "/citizens"
-#         self.assertEqual(r.status_code, 200)
+    def test_method__3__false___citizen_id_valid(self):
+        tmp_data = {
+    "citizens": [{
+            "citizen_id": 1,
+            "town": "Москва",
+            "street": "Льва Толстого",
+            "building": "16к7стр5",
+            "apartment": 7,
+            "name": "Иванов Иван Иванович",
+            "birth_date": "26.12.1986",
+            "gender": "male",
+            "relatives": [2]},
+                {"citizen_id": 2,
+                "town": "Москва",
+                "street": "Льва Толстого",
+                "building": "16к7стр5",
+                "apartment": 7,
+                "name": "Иванов Сергей Иванович",
+                "birth_date": "17.04.1997",
+                "gender": "male",
+                "relatives": [1,3]},
+                    {"citizen_id": 3,
+                    "town": "Керчь",
+                    "street": "Иосифа Бродского",
+                    "building": "2",
+                    "apartment": 11,
+                    "name": "Романова Мария Леонидовна",
+                    "birth_date": "23.11.1986",
+                    "gender": "female",
+                    "relatives": [2]}]}
+        api_url = self.main_url + '/imports'
+        r = requests.post(url=api_url, json=tmp_data)
+        import_id = json.loads(r.text)['data']['import_id']        
+        api_url = self.main_url + '/imports/' + str(int(import_id + 1)) + '/citizens'
+        r = requests.get(api_url)
+        self.assertEqual(r.status_code, 400)
+
         
 unittest.main(argv=[''],
               verbosity=2, 
